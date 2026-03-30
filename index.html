@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS SYSTEM - MHOO</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --main-blue: #0056b3;
+            --white: #ffffff;
+            --bg-gray: #f8f9fa;
+            --text-dark: #333333;
+            --border-color: #dee2e6;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kanit', sans-serif; }
+        body { background-color: #e2e8f0; display: flex; justify-content: center; }
+        .mobile-view { width: 100%; max-width: 480px; background-color: var(--white); min-height: 100vh; position: relative; display: flex; flex-direction: column; }
+
+        header {
+            background-color: var(--main-blue);
+            color: var(--white);
+            padding: 40px 20px;
+            text-align: center;
+            border-bottom-left-radius: 30px;
+            border-bottom-right-radius: 30px;
+            position: relative;
+        }
+        .back-btn { position: absolute; left: 20px; top: 45px; color: white; display: none; cursor: pointer; font-size: 1.2rem; }
+
+        #menu-page { padding: 25px 20px; flex-grow: 1; }
+        .menu-item {
+            display: flex; align-items: center; background-color: var(--white);
+            border: 1px solid var(--border-color); padding: 18px; margin-bottom: 12px;
+            border-radius: 12px; text-decoration: none; color: var(--text-dark);
+            transition: all 0.2s ease; cursor: pointer;
+        }
+        .menu-item:active { background-color: #e7f1ff; transform: scale(0.98); }
+        .menu-icon {
+            width: 45px; height: 45px; background-color: #e7f1ff; color: var(--main-blue);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            margin-right: 15px; font-size: 1.2rem;
+        }
+        .chevron { margin-left: auto; color: #ccc; }
+
+        #form-page { padding: 30px 20px; display: none; flex-grow: 1; }
+        .form-group { margin-bottom: 25px; }
+        .form-label { display: block; margin-bottom: 10px; font-weight: 600; }
+        .form-input {
+            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border-color);
+            font-size: 1rem; background-color: var(--bg-gray); outline: none;
+        }
+
+        .options-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .option-item input[type="radio"] { display: none; }
+        .option-label {
+            display: block; border: 2px solid var(--border-color); padding: 15px;
+            text-align: center; border-radius: 12px; cursor: pointer; font-weight: 600; color: #777;
+        }
+        .option-item input[type="radio"]:checked + .option-label {
+            background-color: #e7f1ff; border-color: var(--main-blue); color: var(--main-blue);
+        }
+        
+        .hidden-option { display: none; }
+        .full-width { grid-column: span 2; }
+
+        .submit-btn {
+            width: 100%; background-color: var(--main-blue); color: white; padding: 18px;
+            border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 600; margin-top: 10px;
+            cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+
+        footer { text-align: center; padding: 20px; color: #aaa; font-size: 0.8rem; }
+    </style>
+</head>
+<body>
+
+    <div class="mobile-view">
+        <header>
+            <div id="back-button" class="back-btn" onclick="goToMenu()"><i class="fa-solid fa-chevron-left"></i></div>
+            <h1 id="header-title">SMS SYSTEM</h1>
+        </header>
+
+        <div id="menu-page">
+            <div class="menu-item" onclick="goToForm('DEMO')">
+                <div class="menu-icon"><i class="fa-solid fa-flask"></i></div>
+                <div class="menu-text"><h3>DEMO</h3></div>
+                <div class="chevron"><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+            <div class="menu-item" onclick="goToForm('LUXMUANG')">
+                <div class="menu-icon"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="menu-text"><h3>LUXMUANG</h3></div>
+                <div class="chevron"><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+            <div class="menu-item" onclick="goToForm('TAPHONG')">
+                <div class="menu-icon"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="menu-text"><h3>TAPHONG</h3></div>
+                <div class="chevron"><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+            <div class="menu-item" onclick="goToForm('SRIRACHA')">
+                <div class="menu-icon"><i class="fa-solid fa-location-dot"></i></div>
+                <div class="menu-text"><h3>SRIRACHA</h3></div>
+                <div class="chevron"><i class="fa-solid fa-chevron-right"></i></div>
+            </div>
+        </div>
+
+        <div id="form-page">
+            <div class="form-group">
+                <label class="form-label">เบอร์โทรศัพท์มือถือ</label>
+                <input type="tel" id="phone-number" class="form-input" placeholder="08x-xxx-xxxx" maxlength="10">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">เลือกประเภท (TYPE)</label>
+                <div class="options-container">
+                    <div class="option-item" id="container-mt16">
+                        <input type="radio" id="mt16" name="mt_type" value="MT16">
+                        <label for="mt16" class="option-label">MT16</label>
+                    </div>
+                    <div class="option-item" id="container-mt45">
+                        <input type="radio" id="mt45" name="mt_type" value="MT45" checked>
+                        <label for="mt45" class="option-label">MT45</label>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="submit-btn" onclick="sendSMS()">
+                <i class="fa-solid fa-paper-plane"></i> ส่ง SMS
+            </button>
+        </div>
+
+        <footer>&copy; 2026 Developed by Akkarapon Mhoo</footer>
+    </div>
+
+    <script>
+        let currentMenu = "";
+
+        function goToForm(menuName) {
+            currentMenu = menuName;
+            document.getElementById('menu-page').style.display = 'none';
+            document.getElementById('form-page').style.display = 'block';
+            document.getElementById('back-button').style.display = 'block';
+            document.getElementById('header-title').innerText = menuName;
+
+            const mt16Container = document.getElementById('container-mt16');
+            const mt45Container = document.getElementById('container-mt45');
+
+            if (menuName === 'DEMO') {
+                mt16Container.classList.remove('hidden-option', 'full-width');
+                mt45Container.classList.remove('hidden-option', 'full-width');
+                document.getElementById('mt16').checked = true;
+            } else {
+                mt16Container.classList.add('hidden-option');
+                mt45Container.classList.add('full-width');
+                document.getElementById('mt45').checked = true;
+            }
+        }
+
+        function goToMenu() {
+            document.getElementById('menu-page').style.display = 'block';
+            document.getElementById('form-page').style.display = 'none';
+            document.getElementById('back-button').style.display = 'none';
+            document.getElementById('header-title').innerText = 'SMS SYSTEM';
+            document.getElementById('phone-number').value = ""; // เคลียร์เบอร์
+        }
+
+        function sendSMS() {
+            const phone = document.getElementById('phone-number').value;
+            if (!phone) {
+                alert("กรุณากรอกเบอร์โทรศัพท์");
+                return;
+            }
+
+            const mtType = document.querySelector('input[name="mt_type"]:checked').value;
+            let message = "";
+
+            // LOGIC กำหนดข้อความตามที่คุณสั่ง
+            if (currentMenu === 'DEMO') {
+                message = (mtType === 'MT45') 
+                    ? "pw,123456,ip,203.146.102.94,8001" 
+                    : "#host#=watch.smartsos.technology,8000#";
+            } else if (currentMenu === 'TAPHONG') {
+                message = "pw,123456,ip,203.146.102.94,7072";
+            } else if (currentMenu === 'SRIRACHA') {
+                message = "pw,123456,ip,203.146.102.94,7002";
+            } else if (currentMenu === 'LUXMUANG') {
+                // สำหรับ luxmuang ที่ไม่ได้ระบุคำสั่งมาพิเศษ ผมใส่เป็นของ DEMO MT45 ไว้ก่อน (หรือเว้นว่างตามต้องการ)
+                message = "pw,123456,ip,203.146.102.94,8001"; 
+            }
+
+            // คำสั่งเปิดแอป SMS ของมือถือ
+            // ใช้เครื่องหมาย ? สำหรับ iOS และ & สำหรับ Android ในกรณีต้องการต่อ string แต่มาตรฐานคือ ?body=
+            const smsUrl = `sms:${phone}?body=${encodeURIComponent(message)}`;
+            window.location.href = smsUrl;
+        }
+    </script>
+</body>
+</html>
