@@ -8,78 +8,184 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --main-blue: #0056b3;
+            --bg-color: #f0f3f8; /* เทาอ่อนออกฟ้า สะอาดตา */
             --white: #ffffff;
-            --bg-gray: #f8f9fa;
-            --text-dark: #333333;
-            --border-color: #dee2e6;
-            --danger-red: #dc3545;
+            --main-blue: #1e3a8a; /* น้ำเงินเข้มทันสมัย */
+            --main-blue-light: #e0e7ff;
+            --text-dark: #374151;
+            --text-light: #6b7280;
+            --border-color: #e5e7eb;
+            --shadow: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.03); /* เงาฟุ้งๆ */
+            --danger-red: #ef4444;
+            --success-green: #10b981;
+            /* สีสำหรับไอคอน (พาสเทลตามตัวอย่าง) */
+            --icon-1: #60a5fa; /* ฟ้า */
+            --icon-2: #f87171; /* แดงพาสเทล */
+            --icon-3: #fbbf24; /* เหลือง */
+            --icon-4: #4ade80; /* เขียว */
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kanit', sans-serif; }
-        body { background-color: #e2e8f0; display: flex; justify-content: center; }
-        .mobile-view { width: 100%; max-width: 480px; background-color: var(--white); min-height: 100vh; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        body { background-color: #f7fafc; display: flex; justify-content: center; }
+        
+        /* Container หลักจำลองมือถือ */
+        .mobile-view {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--bg-color);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
 
+        /* HEADER ใหม่ (แบบโค้งมน สีน้ำเงินเข้มตัดขาว) */
         header {
             background-color: var(--main-blue);
             color: var(--white);
-            padding: 40px 20px;
+            padding: 50px 25px 30px 25px;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(30,58,138, 0.2);
+            z-index: 10;
+        }
+        .back-btn { position: absolute; left: 25px; top: 55px; color: var(--white); cursor: pointer; font-size: 1.3rem; display: none; }
+        header h1 { font-size: 1.6rem; font-weight: 600; text-align: center; }
+
+        /* CONTENT AREA */
+        .content-area { padding: 30px 20px; flex-grow: 1; }
+
+        /* --- หน้าเมนูหลัก (แบบ Grid) --- */
+        #menu-page {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* เรียง 2 คอลัมน์ */
+            gap: 20px;
+        }
+
+        /* การ์ดเมนูใหม่ (Neumorphic Style) */
+        .menu-card {
+            background-color: var(--white);
+            padding: 30px 20px;
+            border-radius: 25px;
             text-align: center;
-            border-bottom-left-radius: 30px;
-            border-bottom-right-radius: 30px;
-            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            transition: all 0.2s ease-in-out;
+            border: 1px solid transparent;
         }
-        .back-btn { position: absolute; left: 20px; top: 45px; color: white; display: none; cursor: pointer; font-size: 1.2rem; }
-
-        #menu-page { padding: 25px 20px; flex-grow: 1; }
-        .menu-item {
-            display: flex; align-items: center; background-color: var(--white);
-            border: 1px solid var(--border-color); padding: 18px; margin-bottom: 12px;
-            border-radius: 12px; text-decoration: none; color: var(--text-dark);
-            transition: all 0.2s ease; cursor: pointer;
-        }
-        .menu-item:active { background-color: #e7f1ff; transform: scale(0.98); }
-        .menu-icon {
-            width: 45px; height: 45px; background-color: #e7f1ff; color: var(--main-blue);
-            border-radius: 10px; display: flex; align-items: center; justify-content: center;
-            margin-right: 15px; font-size: 1.2rem;
-        }
-        .chevron { margin-left: auto; color: #ccc; }
-
-        #form-page { padding: 30px 20px; display: none; flex-grow: 1; }
-        .form-group { margin-bottom: 25px; }
-        .form-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: 600; }
         
-        .phone-input-wrapper { display: flex; gap: 8px; margin-bottom: 10px; }
-        .form-input {
-            flex-grow: 1; padding: 15px; border-radius: 12px; border: 1px solid var(--border-color);
-            font-size: 1rem; background-color: var(--bg-gray); outline: none;
+        /* Effect ตอนกดการ์ด */
+        .menu-card:active {
+            transform: scale(0.95);
+            background-color: #fafbfd;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
         }
 
-        /* ปุ่มเพิ่ม/ลบเบอร์ */
-        .add-btn { background-color: var(--main-blue); color: white; border: none; padding: 0 15px; border-radius: 10px; cursor: pointer; }
-        .remove-btn { background-color: var(--danger-red); color: white; border: none; padding: 0 15px; border-radius: 10px; cursor: pointer; }
+        /* ตกแต่งไอคอนสีสดใส */
+        .card-icon {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+        }
+        
+        /* สีกรอบและไอคอนแยกตามเมนู (ตามตัวอย่างรูปแรก) */
+        .icon-demo { background-color: rgba(96, 165, 250, 0.1); color: var(--icon-1); }
+        .icon-luxmuang { background-color: rgba(248, 113, 113, 0.1); color: var(--icon-2); }
+        .icon-taphong { background-color: rgba(251, 191, 36, 0.1); color: var(--icon-3); }
+        .icon-sriracha { background-color: rgba(74, 222, 128, 0.1); color: var(--icon-4); }
 
+        .menu-card h3 {
+            font-size: 1.05rem;
+            font-weight: 400;
+            color: var(--text-dark);
+            letter-spacing: 0.5px;
+        }
+
+        /* --- หน้าฟอร์มกรอกข้อมูล (แบบ Neumorphic) --- */
+        #form-page { display: none; }
+
+        .form-card {
+            background-color: var(--white);
+            padding: 25px;
+            border-radius: 25px;
+            box-shadow: var(--shadow);
+            margin-bottom: 25px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+        
+        .form-label {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 12px; font-weight: 400; color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+        
+        /* ช่องกรอกเบอร์และปุ่มแบบ Neumorphic */
+        .phone-input-wrapper { display: flex; gap: 10px; margin-bottom: 10px; }
+        .form-input {
+            flex-grow: 1; padding: 15px 20px; border-radius: 15px; border: 1px solid var(--border-color);
+            font-size: 1rem; background-color: var(--bg-color); color: var(--text-dark);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus { border-color: var(--main-blue); background-color: var(--white); }
+
+        /* ปุ่มเพิ่ม/ลบเบอร์แบบไอคอน */
+        .add-btn { background-color: var(--main-blue-light); color: var(--main-blue); border: none; width: 50px; border-radius: 12px; cursor: pointer; font-size: 1rem; }
+        .remove-btn { background-color: #fee2e2; color: var(--danger-red); border: none; width: 50px; border-radius: 12px; cursor: pointer; font-size: 1rem; }
+
+        /* ตัวเลือก TYPE แบบ Card ( Neumorphic Card ตามรูปตัวอย่างที่สอง) */
         .options-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .option-item input[type="radio"] { display: none; }
         .option-label {
-            display: block; border: 2px solid var(--border-color); padding: 15px;
-            text-align: center; border-radius: 12px; cursor: pointer; font-weight: 600; color: #777;
+            display: block; background-color: var(--white); border: 2px solid var(--border-color);
+            padding: 18px; text-align: center; border-radius: 18px; cursor: pointer;
+            font-weight: 600; color: var(--text-light); transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.02);
         }
+        /* Style เมื่อเลือก (Neumorphic Checked) */
         .option-item input[type="radio"]:checked + .option-label {
-            background-color: #e7f1ff; border-color: var(--main-blue); color: var(--main-blue);
+            background-color: var(--main-blue-light);
+            border-color: var(--main-blue);
+            color: var(--main-blue);
+            box-shadow: 0 5px 10px rgba(30,58,138, 0.05);
         }
         
         .hidden-option { display: none; }
         .full-width { grid-column: span 2; }
 
+        /* ปุ่มส่ง SMS ขนาดใหญ่ (ตามรูปตัวอย่างที่สอง ปุ่มเขียว) */
         .submit-btn {
-            width: 100%; background-color: var(--main-blue); color: white; padding: 18px;
-            border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 600; margin-top: 10px;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
+            width: 100%;
+            background-color: var(--success-green); /* เปลี่ยนเป็นสีเขียวตามตัวอย่าง Nearby Location */
+            color: white;
+            padding: 18px;
+            border: none;
+            border-radius: 20px;
+            font-size: 1.15rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            box-shadow: 0 8px 15px rgba(16,185,129, 0.3);
+            transition: all 0.2s;
         }
+        .submit-btn:active { transform: scale(0.98); box-shadow: 0 4px 10px rgba(16,185,129, 0.2); }
 
-        footer { text-align: center; padding: 20px; color: #aaa; font-size: 0.8rem; }
+        /* FOOTER */
+        footer { text-align: center; padding: 25px; color: var(--text-light); font-size: 0.8rem; font-weight: 300; }
     </style>
 </head>
 <body>
@@ -87,62 +193,62 @@
     <div class="mobile-view">
         <header>
             <div id="back-button" class="back-btn" onclick="goToMenu()"><i class="fa-solid fa-chevron-left"></i></div>
-            <h1 id="header-title">SMS SYSTEM</h1>
-        </header>
+            <h1 id="header-title">DASHBOARD</h1> </header>
 
-        <div id="menu-page">
-            <div class="menu-item" onclick="goToForm('DEMO')">
-                <div class="menu-icon"><i class="fa-solid fa-flask"></i></div>
-                <div class="menu-text"><h3>DEMO</h3></div>
-                <div class="chevron"><i class="fa-solid fa-chevron-right"></i></div>
-            </div>
-            <div class="menu-item" onclick="goToForm('LUXMUANG')">
-                <div class="menu-icon"><i class="fa-solid fa-location-dot"></i></div>
-                <div class="menu-text"><h3>LUXMUANG</h3></div>
-                <div class="chevron"><i class="fa-solid fa-chevron-right"></i></div>
-            </div>
-            <div class="menu-item" onclick="goToForm('TAPHONG')">
-                <div class="menu-icon"><i class="fa-solid fa-location-dot"></i></div>
-                <div class="menu-text"><h3>TAPHONG</h3></div>
-                <div class="chevron"><i class="fa-solid fa-chevron-right"></i></div>
-            </div>
-            <div class="menu-item" onclick="goToForm('SRIRACHA')">
-                <div class="menu-icon"><i class="fa-solid fa-location-dot"></i></div>
-                <div class="menu-text"><h3>SRIRACHA</h3></div>
-                <div class="chevron"><i class="fa-solid fa-chevron-right"></i></div>
-            </div>
-        </div>
-
-        <div id="form-page">
-            <div class="form-group">
-                <div class="form-label">
-                    <span>เบอร์โทรศัพท์มือถือ</span>
-                    <button type="button" class="add-btn" onclick="addPhoneField()"><i class="fa-solid fa-plus"></i> เพิ่ม</button>
+        <div class="content-area">
+            <div id="menu-page">
+                <div class="menu-card" onclick="goToForm('DEMO')">
+                    <div class="card-icon icon-demo"><i class="fa-solid fa-flask"></i></div>
+                    <h3>DEMO</h3>
                 </div>
-                <div id="phone-container">
-                    <div class="phone-input-wrapper">
-                        <input type="tel" class="form-input phone-field" placeholder="08x-xxx-xxxx" maxlength="10">
-                    </div>
+                <div class="menu-card" onclick="goToForm('LUXMUANG')">
+                    <div class="card-icon icon-luxmuang"><i class="fa-solid fa-city"></i></div>
+                    <h3>LUXMUANG</h3>
+                </div>
+                <div class="menu-card" onclick="goToForm('TAPHONG')">
+                    <div class="card-icon icon-taphong"><i class="fa-solid fa-industry"></i></div>
+                    <h3>TAPHONG</h3>
+                </div>
+                <div class="menu-card" onclick="goToForm('SRIRACHA')">
+                    <div class="card-icon icon-sriracha"><i class="fa-solid fa-anchor"></i></div>
+                    <h3>SRIRACHA</h3>
                 </div>
             </div>
 
-            <div class="form-group">
-                <label class="form-label">เลือกประเภท (TYPE)</label>
-                <div class="options-container">
-                    <div class="option-item" id="container-mt16">
-                        <input type="radio" id="mt16" name="mt_type" value="MT16">
-                        <label for="mt16" class="option-label">MT16</label>
+            <div id="form-page">
+                <div class="form-card">
+                    <div class="form-group">
+                        <div class="form-label">
+                            <span>เบอร์โทรศัพท์มือถือ</span>
+                            <button type="button" class="add-btn" onclick="addPhoneField()"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <div id="phone-container">
+                            <div class="phone-input-wrapper">
+                                <input type="tel" class="form-input phone-field" placeholder="กรอกเบอร์โทรศัพท์" maxlength="10">
+                            </div>
+                        </div>
                     </div>
-                    <div class="option-item" id="container-mt45">
-                        <input type="radio" id="mt45" name="mt_type" value="MT45" checked>
-                        <label for="mt45" class="option-label">MT45</label>
+
+                    <div class="form-group">
+                        <label class="form-label">เลือกประเภท (TYPE)</label>
+                        <div class="options-container">
+                            <div class="option-item" id="container-mt16">
+                                <input type="radio" id="mt16" name="mt_type" value="MT16">
+                                <label for="mt16" class="option-label">MT16</label>
+                            </div>
+                            <div class="option-item" id="container-mt45">
+                                <input type="radio" id="mt45" name="mt_type" value="MT45" checked>
+                                <label for="mt45" class="option-label">MT45</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <button type="button" class="submit-btn" onclick="sendSMS()">
-                <i class="fa-solid fa-paper-plane"></i> ส่ง SMS
-            </button>
+                <button type="button" class="submit-btn" onclick="sendSMS()">
+                    <i class="fa-solid fa-paper-plane"></i>
+                    ส่ง SMS
+                </button>
+            </div>
         </div>
 
         <footer>&copy; 2026 Developed by Akkarapon Mhoo</footer>
@@ -173,14 +279,14 @@
         }
 
         function goToMenu() {
-            document.getElementById('menu-page').style.display = 'block';
+            document.getElementById('menu-page').style.display = 'grid'; // ปรับเป็น grid
             document.getElementById('form-page').style.display = 'none';
             document.getElementById('back-button').style.display = 'none';
-            document.getElementById('header-title').innerText = 'SMS SYSTEM';
+            document.getElementById('header-title').innerText = 'DASHBOARD'; // คืนค่า Dashboard
             // รีเซ็ตเบอร์ให้เหลือช่องเดียว
             document.getElementById('phone-container').innerHTML = `
                 <div class="phone-input-wrapper">
-                    <input type="tel" class="form-input phone-field" placeholder="08x-xxx-xxxx" maxlength="10">
+                    <input type="tel" class="form-input phone-field" placeholder="กรอกเบอร์โทรศัพท์" maxlength="10">
                 </div>
             `;
         }
@@ -190,15 +296,13 @@
             const div = document.createElement('div');
             div.className = 'phone-input-wrapper';
             div.innerHTML = `
-                <input type="tel" class="form-input phone-field" placeholder="08x-xxx-xxxx" maxlength="10">
+                <input type="tel" class="form-input phone-field" placeholder="กรอกเบอร์โทรศัพท์" maxlength="10">
                 <button type="button" class="remove-btn" onclick="removePhoneField(this)"><i class="fa-solid fa-trash"></i></button>
             `;
             container.appendChild(div);
         }
 
-        function removePhoneField(btn) {
-            btn.parentElement.remove();
-        }
+        function removePhoneField(btn) { btn.parentElement.remove(); }
 
         function sendSMS() {
             const fields = document.querySelectorAll('.phone-field');
@@ -211,7 +315,7 @@
             });
 
             if (phoneList.length === 0) {
-                alert("กรุณากรอกเบอร์โทรศัพท์อย่างน้อย 1 เบอร์");
+                alert("กรุณากรอกเบอร์โทรศัพท์ให้เรียบร้อย");
                 return;
             }
 
@@ -230,7 +334,7 @@
                 message = "pw,123456,ip,203.146.102.94,9002"; 
             }
 
-            // รวมเบอร์ด้วยเครื่องหมายคอมม่า (,) สำหรับส่งหลายคน
+            // รวมเบอร์ด้วยเครื่องหมายคอมม่า (,)
             const allPhones = phoneList.join(',');
             window.location.href = `sms:${allPhones}?body=${encodeURIComponent(message)}`;
         }
