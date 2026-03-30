@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SMS SYSTEM - MHOO</title>
+    <title>SMS SYSTEM</title>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -13,11 +13,12 @@
             --bg-gray: #f8f9fa;
             --text-dark: #333333;
             --border-color: #dee2e6;
+            --danger-red: #dc3545;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Kanit', sans-serif; }
         body { background-color: #e2e8f0; display: flex; justify-content: center; }
-        .mobile-view { width: 100%; max-width: 480px; background-color: var(--white); min-height: 100vh; position: relative; display: flex; flex-direction: column; }
+        .mobile-view { width: 100%; max-width: 480px; background-color: var(--white); min-height: 100vh; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
 
         header {
             background-color: var(--main-blue);
@@ -47,11 +48,17 @@
 
         #form-page { padding: 30px 20px; display: none; flex-grow: 1; }
         .form-group { margin-bottom: 25px; }
-        .form-label { display: block; margin-bottom: 10px; font-weight: 600; }
+        .form-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; font-weight: 600; }
+        
+        .phone-input-wrapper { display: flex; gap: 8px; margin-bottom: 10px; }
         .form-input {
-            width: 100%; padding: 15px; border-radius: 12px; border: 1px solid var(--border-color);
+            flex-grow: 1; padding: 15px; border-radius: 12px; border: 1px solid var(--border-color);
             font-size: 1rem; background-color: var(--bg-gray); outline: none;
         }
+
+        /* ปุ่มเพิ่ม/ลบเบอร์ */
+        .add-btn { background-color: var(--main-blue); color: white; border: none; padding: 0 15px; border-radius: 10px; cursor: pointer; }
+        .remove-btn { background-color: var(--danger-red); color: white; border: none; padding: 0 15px; border-radius: 10px; cursor: pointer; }
 
         .options-container { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .option-item input[type="radio"] { display: none; }
@@ -69,7 +76,7 @@
         .submit-btn {
             width: 100%; background-color: var(--main-blue); color: white; padding: 18px;
             border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 600; margin-top: 10px;
-            cursor: pointer; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); display: flex; align-items: center; justify-content: center; gap: 10px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px;
         }
 
         footer { text-align: center; padding: 20px; color: #aaa; font-size: 0.8rem; }
@@ -108,8 +115,15 @@
 
         <div id="form-page">
             <div class="form-group">
-                <label class="form-label">เบอร์โทรศัพท์มือถือ</label>
-                <input type="tel" id="phone-number" class="form-input" placeholder="08x-xxx-xxxx" maxlength="10">
+                <div class="form-label">
+                    <span>เบอร์โทรศัพท์มือถือ</span>
+                    <button type="button" class="add-btn" onclick="addPhoneField()"><i class="fa-solid fa-plus"></i> เพิ่ม</button>
+                </div>
+                <div id="phone-container">
+                    <div class="phone-input-wrapper">
+                        <input type="tel" class="form-input phone-field" placeholder="08x-xxx-xxxx" maxlength="10">
+                    </div>
+                </div>
             </div>
 
             <div class="form-group">
@@ -163,20 +177,47 @@
             document.getElementById('form-page').style.display = 'none';
             document.getElementById('back-button').style.display = 'none';
             document.getElementById('header-title').innerText = 'SMS SYSTEM';
-            document.getElementById('phone-number').value = ""; // เคลียร์เบอร์
+            // รีเซ็ตเบอร์ให้เหลือช่องเดียว
+            document.getElementById('phone-container').innerHTML = `
+                <div class="phone-input-wrapper">
+                    <input type="tel" class="form-input phone-field" placeholder="08x-xxx-xxxx" maxlength="10">
+                </div>
+            `;
+        }
+
+        function addPhoneField() {
+            const container = document.getElementById('phone-container');
+            const div = document.createElement('div');
+            div.className = 'phone-input-wrapper';
+            div.innerHTML = `
+                <input type="tel" class="form-input phone-field" placeholder="08x-xxx-xxxx" maxlength="10">
+                <button type="button" class="remove-btn" onclick="removePhoneField(this)"><i class="fa-solid fa-trash"></i></button>
+            `;
+            container.appendChild(div);
+        }
+
+        function removePhoneField(btn) {
+            btn.parentElement.remove();
         }
 
         function sendSMS() {
-            const phone = document.getElementById('phone-number').value;
-            if (!phone) {
-                alert("กรุณากรอกเบอร์โทรศัพท์");
+            const fields = document.querySelectorAll('.phone-field');
+            const phoneList = [];
+            
+            fields.forEach(input => {
+                if (input.value.trim() !== "") {
+                    phoneList.push(input.value.trim());
+                }
+            });
+
+            if (phoneList.length === 0) {
+                alert("กรุณากรอกเบอร์โทรศัพท์อย่างน้อย 1 เบอร์");
                 return;
             }
 
             const mtType = document.querySelector('input[name="mt_type"]:checked').value;
             let message = "";
 
-            // LOGIC กำหนดข้อความตามที่คุณสั่ง
             if (currentMenu === 'DEMO') {
                 message = (mtType === 'MT45') 
                     ? "pw,123456,ip,203.146.102.94,8001" 
@@ -186,14 +227,12 @@
             } else if (currentMenu === 'SRIRACHA') {
                 message = "pw,123456,ip,203.146.102.94,7002";
             } else if (currentMenu === 'LUXMUANG') {
-                // สำหรับ luxmuang ที่ไม่ได้ระบุคำสั่งมาพิเศษ ผมใส่เป็นของ DEMO MT45 ไว้ก่อน (หรือเว้นว่างตามต้องการ)
-                message = "pw,123456,ip,203.146.102.94,8001"; 
+                message = "pw,123456,ip,203.146.102.94,9002"; 
             }
 
-            // คำสั่งเปิดแอป SMS ของมือถือ
-            // ใช้เครื่องหมาย ? สำหรับ iOS และ & สำหรับ Android ในกรณีต้องการต่อ string แต่มาตรฐานคือ ?body=
-            const smsUrl = `sms:${phone}?body=${encodeURIComponent(message)}`;
-            window.location.href = smsUrl;
+            // รวมเบอร์ด้วยเครื่องหมายคอมม่า (,) สำหรับส่งหลายคน
+            const allPhones = phoneList.join(',');
+            window.location.href = `sms:${allPhones}?body=${encodeURIComponent(message)}`;
         }
     </script>
 </body>
